@@ -4,7 +4,7 @@ import { todoItemProjector }        from "./todoProjector.js";
 import { Scheduler }                from "../dataflow/dataflow.js";
 import { fortuneService }           from "./fortuneService.js";
 
-export { TodoController, TodoItemsView, TodoTotalView, TodoOpenView}
+export { TodoController, TodoItemsView, TodoTotalView, TodoOpenView, TodoProgressView}
 
 const TodoController = () => {
 
@@ -51,12 +51,20 @@ const TodoController = () => {
            )
         );
     };
+    const numberOfTodos = todoModel.count;
+    const numberOfopenTasks =  () =>
+              todoModel.countIf( todo => ! todo.getDone() );
+    const getOpenPercentage = () =>
+        numberOfTodos() === 0
+        ? 0
+        : 100 * numberOfopenTasks() / numberOfTodos();
 
     return {
-        numberOfTodos:      todoModel.count,
-        numberOfopenTasks:  () => todoModel.countIf( todo => ! todo.getDone() ),
-        addTodo:            addTodo,
-        addFortuneTodo:     addFortuneTodo,
+        numberOfTodos,
+        numberOfopenTasks,
+        getOpenPercentage,
+        addTodo,
+        addFortuneTodo,
         removeTodo:         todoModel.del,
         onTodoAdd:          todoModel.onAdd,
         onTodoRemove:       todoModel.onDel,
@@ -94,6 +102,22 @@ const TodoOpenView = (todoController, numberOfOpenTasksElement) => {
 
     const render = () =>
         numberOfOpenTasksElement.innerText = "" + todoController.numberOfopenTasks();
+
+    // binding
+
+    todoController.onTodoAdd(todo => {
+        render();
+        todo.onDoneChanged(render);
+    });
+    todoController.onTodoRemove(render);
+};
+
+const TodoProgressView = (todoController, progressElement) => {
+
+    const render = () => {
+        const pct = todoController.getOpenPercentage();
+        progressElement.style.setProperty("--progress-pct", `${pct}%`);
+    }
 
     // binding
 
