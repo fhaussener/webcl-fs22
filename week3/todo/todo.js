@@ -52,11 +52,20 @@ const TodoController = () => {
         );
     };
 
+    const numberOfTodos     = todoModel.count;
+    const numberOfopenTasks = () =>
+          todoModel.countIf( todo => ! todo.getDone() );
+    const openTasksRatio    = () =>
+          0 === numberOfTodos()
+          ? undefined
+          : numberOfopenTasks() / numberOfTodos();
+
     return {
-        numberOfTodos:      todoModel.count,
-        numberOfopenTasks:  () => todoModel.countIf( todo => ! todo.getDone() ),
-        addTodo:            addTodo,
-        addFortuneTodo:     addFortuneTodo,
+        numberOfTodos,
+        numberOfopenTasks,
+        openTasksRatio,
+        addTodo,
+        addFortuneTodo,
         removeTodo:         todoModel.del,
         onTodoAdd:          todoModel.onAdd,
         onTodoRemove:       todoModel.onDel,
