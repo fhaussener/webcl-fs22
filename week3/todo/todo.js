@@ -4,7 +4,15 @@ import { todoItemProjector }        from "./todoProjector.js";
 import { Scheduler }                from "../dataflow/dataflow.js";
 import { fortuneService }           from "./fortuneService.js";
 
-export { TodoController, TodoItemsView, TodoTotalView, TodoOpenView}
+export { 
+    TodoController,
+    TodoItemsView, 
+    TodoTotalView, 
+    TodoOpenView, 
+    TodoClosedView,
+    TodoOpenRatioView,
+    TodoClosedRatioView
+}
 
 const TodoController = () => {
 
@@ -52,27 +60,41 @@ const TodoController = () => {
         );
     };
 
-    const numberOfTodos     = todoModel.count;
-    const numberOfopenTasks = () =>
-          todoModel.countIf( todo => ! todo.getDone() );
-    const openTasksRatio    = () =>
+    const numberOfTodos            = todoModel.count;
+    const numberOfOpenTasks        = () =>
+          todoModel.countIf( todo => !todo.getDone() );
+    const numberOfClosedTasks      = () =>
+          todoModel.countIf( todo => todo.getDone() );
+    const openTasksRatio           = () =>
           0 === numberOfTodos()
           ? undefined
-          : numberOfopenTasks() / numberOfTodos();
+          : numberOfOpenTasks() / numberOfTodos()
+    const closedTasksRatio         = () =>
+          0 === numberOfTodos()
+          ? undefined
+          : numberOfClosedTasks() / numberOfTodos()
+    const removeTodo               = todoModel.del;
+    const onTodoAdd                = todoModel.onAdd;
+    const onTodoRemove             = todoModel.onDel;
+    const removeTodoRemoveListener = todoModel.removeDeleteListener; // only for the test case, not used below
+
 
     return {
         numberOfTodos,
-        numberOfopenTasks,
+        numberOfOpenTasks,
+        numberOfClosedTasks,
         openTasksRatio,
+        closedTasksRatio,
         addTodo,
         addFortuneTodo,
-        removeTodo:         todoModel.del,
-        onTodoAdd:          todoModel.onAdd,
-        onTodoRemove:       todoModel.onDel,
-        removeTodoRemoveListener: todoModel.removeDeleteListener, // only for the test case, not used below
+        removeTodo,
+        onTodoAdd,
+        onTodoRemove,
+        removeTodoRemoveListener
     }
 };
 
+const ratioToPercentage = (ratio) => Math.round(ratio * 100).toFixed(0);
 
 // View-specific parts
 
@@ -102,7 +124,49 @@ const TodoTotalView = (todoController, numberOfTasksElement) => {
 const TodoOpenView = (todoController, numberOfOpenTasksElement) => {
 
     const render = () =>
-        numberOfOpenTasksElement.innerText = "" + todoController.numberOfopenTasks();
+        numberOfOpenTasksElement.innerText = "" + todoController.numberOfOpenTasks();
+
+    // binding
+
+    todoController.onTodoAdd(todo => {
+        render();
+        todo.onDoneChanged(render);
+    });
+    todoController.onTodoRemove(render);
+};
+
+const TodoOpenRatioView = (todoController, openRatioElement) => {
+
+    const render = () =>
+        openRatioElement.innerText = `${ratioToPercentage(todoController.openTasksRatio())}%`;
+
+    // binding
+
+    todoController.onTodoAdd(todo => {
+        render();
+        todo.onDoneChanged(render);
+    });
+    todoController.onTodoRemove(render);
+};
+
+
+const TodoClosedView = (todoController, openRatioElement) => {
+
+    const render = () =>
+        openRatioElement.innerText = "" + todoController.numberOfClosedTasks();
+
+    todoController.onTodoAdd(todo => {
+            render();
+            todo.onDoneChanged(render);
+    });
+    todoController.onTodoRemove(render);
+};
+
+
+const TodoClosedRatioView = (todoController, closedRatioElement) => {
+
+    const render = () =>
+        closedRatioElement.innerText = `${ratioToPercentage(todoController.closedTasksRatio())}%`;
 
     // binding
 
