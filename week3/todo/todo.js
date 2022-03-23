@@ -94,7 +94,6 @@ const TodoController = () => {
     }
 };
 
-const ratioToPercentage = (ratio) => Math.round(ratio * 100).toFixed(0);
 
 // View-specific parts
 
@@ -104,7 +103,6 @@ const TodoItemsView = (todoController, rootElement) => {
         todoItemProjector(todoController, rootElement, todo);
 
     // binding
-
     todoController.onTodoAdd(render);
 
     // we do not expose anything as the view is totally passive.
@@ -116,7 +114,6 @@ const TodoTotalView = (todoController, numberOfTasksElement) => {
         numberOfTasksElement.innerText = "" + todoController.numberOfTodos();
 
     // binding
-
     todoController.onTodoAdd(render);
     todoController.onTodoRemove(render);
 };
@@ -126,53 +123,37 @@ const TodoOpenView = (todoController, numberOfOpenTasksElement) => {
     const render = () =>
         numberOfOpenTasksElement.innerText = "" + todoController.numberOfOpenTasks();
 
-    // binding
-
-    todoController.onTodoAdd(todo => {
-        render();
-        todo.onDoneChanged(render);
-    });
-    todoController.onTodoRemove(render);
+    setupBinding(todoController, render);
 };
 
 const TodoOpenRatioView = (todoController, openRatioElement) => {
-
     const render = () =>
         openRatioElement.innerText = `${ratioToPercentage(todoController.openTasksRatio())}%`;
 
-    // binding
-
-    todoController.onTodoAdd(todo => {
-        render();
-        todo.onDoneChanged(render);
-    });
-    todoController.onTodoRemove(render);
+    setupBinding(todoController, render);
 };
 
 
 const TodoClosedView = (todoController, openRatioElement) => {
-
     const render = () =>
         openRatioElement.innerText = "" + todoController.numberOfClosedTasks();
 
-    todoController.onTodoAdd(todo => {
-            render();
-            todo.onDoneChanged(render);
-    });
-    todoController.onTodoRemove(render);
+    setupBinding(todoController, render);
 };
 
 
-const TodoClosedRatioView = (todoController, closedRatioElement) => {
+const TodoClosedRatioView = (todoController, closedRatioElement) => {    
+    const render = () => closedRatioElement.innerText =  `${ratioToPercentage(todoController.closedTasksRatio())}%`;
 
-    const render = () =>
-        closedRatioElement.innerText = `${ratioToPercentage(todoController.closedTasksRatio())}%`;
-
-    // binding
-
-    todoController.onTodoAdd(todo => {
-        render();
-        todo.onDoneChanged(render);
-    });
-    todoController.onTodoRemove(render);
+    setupBinding(todoController, render);
 };
+
+const setupBinding = (todoController, renderFunc) =>{
+    todoController.onTodoAdd(todo => {
+        renderFunc();
+        todo.onDoneChanged(renderFunc);
+    });
+    todoController.onTodoRemove(renderFunc);
+}
+
+const ratioToPercentage = (ratio) => Math.round(ratio * 100).toFixed(0);
