@@ -23,7 +23,7 @@ todoCtrlSuite.add("todo-ctrl", assert => {
     assert.is(todoController.closedTasksRatio(),    0); // 0%
 
 
-    //Plus 1 Todo und auf done setzten
+    // Plus 1 Todo und auf done setzten
     const closedTodo = todoController.addTodo();
     closedTodo.setDone(true);
 
@@ -34,7 +34,7 @@ todoCtrlSuite.add("todo-ctrl", assert => {
     assert.is(todoController.closedTasksRatio(),    0.5); // 50%
 
 
-    //Minus 1 open Todo
+    // Minus 1 open Todo
     todoController.removeTodo(openTodo);
 
     assert.is(todoController.numberOfTodos(),       1);
@@ -43,8 +43,8 @@ todoCtrlSuite.add("todo-ctrl", assert => {
     assert.is(todoController.openTasksRatio(),      0); // 0%
     assert.is(todoController.closedTasksRatio(),    1); // 100%
 
-    
-    //Minus 1 closed Todo
+
+    // Minus 1 closed Todo
     todoController.removeTodo(closedTodo);
 
     assert.is(todoController.numberOfTodos(),       0);
@@ -52,6 +52,16 @@ todoCtrlSuite.add("todo-ctrl", assert => {
     assert.is(todoController.numberOfClosedTasks(), 0);
     assert.is(todoController.openTasksRatio(),      undefined); // 0%
     assert.is(todoController.closedTasksRatio(),    undefined); // 0%
+
+      // Hinzufügen Todo via fortune service
+      todoController.addFortuneTodo(closedTodo);
+
+      assert.is(todoController.numberOfTodos(),       1);
+      assert.is(todoController.numberOfOpenTasks(),   1);
+      assert.is(todoController.numberOfClosedTasks(), 0);
+      assert.is(todoController.openTasksRatio(),      1); // 100%
+      assert.is(todoController.closedTasksRatio(),    0); // 0%
+
 });
 
 todoCtrlSuite.run();
