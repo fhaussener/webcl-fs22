@@ -1,5 +1,14 @@
 
-import {TodoController, TodoOpenView, TodoOpenRatioView, TodoTotalView, TodoItemsView, TodoClosedRatioView, TodoClosedView } from './todo.js';
+import {
+    TodoController, 
+    TodoOpenView, 
+    TodoOpenRatioView, 
+    TodoTotalView, 
+    TodoItemsView, 
+    TodoClosedRatioView, 
+    TodoClosedView, 
+    ProgressVizView
+ } from './todo.js';
 
 const todoController = TodoController();
 
@@ -16,6 +25,7 @@ TodoOpenView       (todoController, document.getElementById('openTasks'));
 TodoOpenRatioView  (todoController, document.getElementById('openRatio'));
 TodoClosedView     (todoController, document.getElementById('closedTasks'));
 TodoClosedRatioView(todoController, document.getElementById('closedRatio'));
+ProgressVizView    (todoController, document.getElementById('progressViz'));
 
 // init the model
 

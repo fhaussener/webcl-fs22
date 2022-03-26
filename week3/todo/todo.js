@@ -11,7 +11,8 @@ export {
     TodoOpenView, 
     TodoClosedView,
     TodoOpenRatioView,
-    TodoClosedRatioView
+    TodoClosedRatioView,
+    ProgressVizView
 }
 
 const TodoController = () => {
@@ -144,6 +145,25 @@ const TodoClosedView = (todoController, openRatioElement) => {
 
 const TodoClosedRatioView = (todoController, closedRatioElement) => {    
     const render = () => closedRatioElement.innerText =  `${ratioToPercentage(todoController.closedTasksRatio())}%`;
+
+    setupBinding(todoController, render);
+};
+
+
+const ProgressVizView = (todoController, progressVizEl) => {    
+    const render = () => {
+        const openEl   = progressVizEl.children[0]; 
+        const closedEl = progressVizEl.children[1]; 
+
+        const openPercentage   = ratioToPercentage(todoController.openTasksRatio());
+        const closedPercentage = ratioToPercentage(todoController.closedTasksRatio());
+    
+        openPercentage   > 0 ? openEl.innerText   = `Open: ${openPercentage}%`    : openEl.innerText   = ""; 
+        closedPercentage > 0 ? closedEl.innerText = `Closed: ${closedPercentage}%`: closedEl.innerText = ""; 
+
+        openEl.style.width   = `${openPercentage}%`
+        closedEl.style.width = `${closedPercentage}%`
+    }
 
     setupBinding(todoController, render);
 };
