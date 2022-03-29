@@ -53,14 +53,14 @@ todoCtrlSuite.add("todo-ctrl", assert => {
     assert.is(todoController.openTasksRatio(),      undefined); // 0%
     assert.is(todoController.closedTasksRatio(),    undefined); // 0%
 
-      // Hinzufügen Todo via fortune service
-      todoController.addFortuneTodo(closedTodo);
+    // Hinzufügen Todo via fortune service
+    todoController.addFortuneTodo(closedTodo);
 
-      assert.is(todoController.numberOfTodos(),       1);
-      assert.is(todoController.numberOfOpenTasks(),   1);
-      assert.is(todoController.numberOfClosedTasks(), 0);
-      assert.is(todoController.openTasksRatio(),      1); // 100%
-      assert.is(todoController.closedTasksRatio(),    0); // 0%
+    assert.is(todoController.numberOfTodos(),       1);
+    assert.is(todoController.numberOfOpenTasks(),   1);
+    assert.is(todoController.numberOfClosedTasks(), 0);
+    assert.is(todoController.openTasksRatio(),      1); // 100%
+    assert.is(todoController.closedTasksRatio(),    0); // 0%
 
 });
 
